@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="ThinkBridge Test Suite">
+  <test name="Test Basics 1">
+	  <parameter name="Dropdownoption" value="English,Dutch"/>
+	  <parameter name="Email" value="magesh@gmail.com"/>
+	  <parameter name="FullName" value="test"/>
+	  <parameter name="OrganizationName" value="test"/>
+	  <parameter name="Browser" value="Chrome"/>
+	  <classes>
+	  <class name="com.automation.test.TestCase"/>
+	  </classes>
+  </test> <!-- Test -->	
+</suite> <!-- Suite -->
