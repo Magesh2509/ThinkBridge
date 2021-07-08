@@ -46,6 +46,6 @@ Chrome Browser
 Steps to run the test script:
 1. Import the test package into an IDE (Eclipse is preferred)
 2. Right click on the TestNG.xml and run it as TestNG Suite
-3. Refresh the test package and open the report folder there should be a report with the recnt timestamp
+3. Refresh the test package and open the report folder there should be a report with the recent timestamp
 
-Note: Since I have used WebDriverManager and TESTNG User don't need to worry about driver initiation and quiting the driver.
+Note: Since I have used WebDriverManager and TESTNG, User don't need to worry about driver initiation and quiting the driver.
