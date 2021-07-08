@@ -48,4 +48,6 @@ Steps to run the test script:
 2. Right click on the TestNG.xml and run it as TestNG Suite
 3. Refresh the test package and open the report folder there should be a report with the recent timestamp
 
-Note: Since I have used WebDriverManager and TESTNG, User don't need to worry about driver initiation and quiting the driver.
+Note: 
+Since I have used WebDriverManager and TESTNG, User don't need to worry about driver initiation and quiting the driver.
+If the reviewer wants to review the framework level source code please go through the SourceCode.txt file for more info.
