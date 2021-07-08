@@ -1,0 +1,240 @@
+package com.automation.utility;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Parameters;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class Selenium {
+
+	public static Selenium flow=new Selenium();
+	public static WebDriver owebdriver;
+	public static ExtentReports extent;
+	public static ExtentTest test;
+	public static ExtentHtmlReporter htmlreporter;
+	@BeforeTest
+	@Parameters({"Browser"})
+	public void StartDriver(String browser) throws Exception
+	{
+		try
+		{
+			String Browser=browser.toUpperCase();
+			switch (Browser)
+			{
+			case "CHROME":
+				ChromeOptions options=new ChromeOptions();
+				options.addArguments("--start-maximized");
+				options.setExperimentalOption("useAutomationExtension", false);
+				DesiredCapabilities cap=new DesiredCapabilities();
+				cap.setCapability(ChromeOptions.CAPABILITY, options);
+				WebDriverManager.chromedriver().setup();
+				owebdriver=new ChromeDriver(cap);
+				owebdriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				break;
+			case "FIREFOX":
+				WebDriverManager.firefoxdriver().setup();
+				owebdriver=new FirefoxDriver();
+				owebdriver.manage().window().maximize();
+				owebdriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				break;
+			case "EDGE":
+				WebDriverManager.edgedriver().arch32().setup();
+				owebdriver=new EdgeDriver();
+				owebdriver.manage().window().maximize();
+				owebdriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				break;
+			}
+			CreateDirectory(System.getProperty("user.dir")+"//Reports");
+			SimpleDateFormat formatter=new SimpleDateFormat("MM-dd-yyyy hh-mm-ss aa");
+			Date date=new Date();
+			String datetimeseconds=formatter.format(date);
+			htmlreporter=new ExtentHtmlReporter(System.getProperty("user.dir")+"//Reports//ThinkBridge_SignUp_TestCase_"+datetimeseconds+".html");
+			htmlreporter.config().setDocumentTitle("ThinkBridgeReport");
+			htmlreporter.config().setReportName("ThinkBridgeReport");
+			extent=new ExtentReports();
+			extent.attachReporter(htmlreporter);
+			extent.setSystemInfo("Browser", Browser);
+			test=extent.createTest("Think Bridge Sign Up Test Case");
+			}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	public void ExplicitWait(String xpath) throws Exception
+	{
+		try
+		{
+			WebDriverWait wait = new WebDriverWait(owebdriver,30);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	public void CreateDirectory(String filepath) throws Exception
+	{
+		try
+		{
+			File file=new File(filepath);
+			if(!file.exists())
+			{
+				if(file.mkdir())
+				{
+					System.out.println("Report Directory is created");
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+	}
+	public void ClickCheckBox() throws Exception
+	{
+		try
+		{
+			
+			owebdriver.findElement(By.xpath(".//label[@class='ui-checkbox']//span")).click();
+			test.log(Status.PASS, "Successfully clicked the check box");
+		}
+		catch(Exception e)
+		{
+			test.log(Status.FAIL, "Faled to click the check box due to the exception - "+e.toString());
+			e.printStackTrace();
+		}
+	}
+	public void ValidateDropDown(String Option) throws Exception
+	{
+		try
+		{
+			owebdriver.findElement(By.xpath("//*[@class='ui-select-match-text pull-left']//*[text()='English']")).click();
+			String option[]=Option.split(",");
+			List<WebElement>opt=owebdriver.findElements(By.xpath(".//a[@class='ui-select-choices-row-inner']//div"));
+			int i=0;
+			for(WebElement element:opt)
+			{
+				String value=element.getText();
+				if(value.equals(option[i]))
+				{
+					System.out.println("Value Matches");
+					test.log(Status.PASS, "Successfully verified the dropdown option - "+value);
+				}
+				else
+				{
+					System.out.println("Value Mismatches");
+					test.log(Status.FAIL, "Failed to verify the dropdown option - "+value+" because the drop down value mismatched with the expected value - "+option[i]);
+				}
+				i++;
+			}
+			owebdriver.findElement(By.xpath("(.//a//img)[3]")).click();
+			
+		}
+		catch(Exception e)
+		{
+			test.log(Status.FAIL, "Faled to verify the drop down options due to the exception - "+e.toString());
+			e.printStackTrace();
+		}
+	}
+	public void VerifyTextPresentinUI(String text) throws Exception
+	{
+		try
+		{
+			
+			boolean mailpresent=owebdriver.findElement(By.xpath("//*[text()=' A welcome email has been sent. Please check your email. ']")).isDisplayed();
+			flow.ExplicitWait("//*[text()=' A welcome email has been sent. Please check your email. ']");
+			if(mailpresent)
+			{
+				System.out.println("Email Text Present in the UI");
+				test.log(Status.PASS, "Email Text Present in the UI -  A welcome email has been sent. Please check your email. ");
+			}
+		}
+		catch(Exception e)
+		{
+			test.log(Status.FAIL, "Faled to verify the text present in the UI due to the exception - "+e.toString());
+			e.printStackTrace();
+		}
+	}
+	public void TypeTextBasedonPlaceholderName(String placeholdername,String text) throws Exception
+	{
+		try
+		{
+			owebdriver.findElement(By.xpath(".//input[@placeholder='"+placeholdername+"']")).sendKeys(text);
+			test.log(Status.PASS, text+" is populated in the text box with the placeholder text - "+placeholdername);
+		}
+		catch(Exception e)
+		{
+			test.log(Status.FAIL, "Faled to type the text due to the exception - "+e.toString());
+			e.printStackTrace();
+		}
+	}
+	public void ClickButton(String buttoname) throws Exception
+	{
+		try
+		{
+			owebdriver.findElement(By.xpath(".//button[text()='"+buttoname+"']")).click();
+			test.log(Status.PASS, "Clicked the button with the name - "+buttoname);
+
+		}
+		catch(Exception e)
+		{
+			test.log(Status.FAIL, "Faled to click the button due to the exception - "+e.toString());
+			e.printStackTrace();
+		}
+	}
+	
+	public void OpenURL(String URL) throws Exception
+	{
+		try
+		{
+			owebdriver.get(URL);
+			test.log(Status.PASS, "Successfully opened the URL - "+URL);
+		}
+		catch(Exception e)
+		{
+			test.log(Status.FAIL, "Faled to open the URL due to the exception - "+e.toString());
+			e.printStackTrace();
+		}
+	}
+	@AfterTest
+	public void QuitDriver() throws Exception
+	{
+		try
+		{
+			owebdriver.quit();
+			test.log(Status.PASS, "Driver quits successfully");
+			extent.flush();
+		}
+		catch(Exception e)
+		{
+			test.log(Status.FAIL, "Faled to quit the driver due to the exception - "+e.toString());
+			e.printStackTrace();
+			extent.flush();
+		}
+	}
+}
