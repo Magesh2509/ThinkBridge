@@ -8,7 +8,7 @@ Build management tool: Maven
 
 Framework design:
 
-I have created this use case in a framework way for that I have created all the predefined functions which is needed by the user to complete the sign up form. All those predefined functions are converted into a jar so that the person who is going to use this framework can use the below listed functions to automate the form.
+I have created this use case in a framework for that I have created all the predefined functions which are needed by the user to complete the sign up form. All those predefined functions are converted into a jar so that the person who is going to use this framework can use the below listed functions to automate the form.
 
 Functions created for this use case:
 
